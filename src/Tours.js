@@ -12,10 +12,12 @@ const Tours = (props) => {
         return (
           <Tour
             key={tour.id}
+            id={tour.id}
             name={tour.name}
             info={tour.info}
             image={tour.image}
             price={tour.price}
+            removeTour={props.removeTour}
           />
         )
       })}

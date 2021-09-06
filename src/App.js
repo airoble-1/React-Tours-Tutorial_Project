@@ -8,31 +8,64 @@ const url = "https://course-api.com/react-tours-project"
 function App() {
   const [tours, setTours] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [errorMessage, setErrorMessge] = useState(null)
+
+  const removeTour = (id) => {
+    const newTours = tours.filter((tour) => tour.id !== id)
+    setTours(newTours)
+  }
 
   const fetchTours = async () => {
     try {
+      setErrorMessge(null)
       setIsLoading(true)
-      const response = await fetch(url)
+      const response = await fetch("https://course-api.com/react-tours-project")
       if (!response.ok) {
         throw new Error("Something went wrong!")
       }
       const data = await response.json()
       setTours(data)
-      setIsLoading(false)
     } catch (error) {
-      setError(error.message)
-      setIsLoading(false)
+      console.log(error.message)
+      setErrorMessge(error.message)
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
     fetchTours()
   }, [])
 
+  if (!isLoading && errorMessage) {
+    return (
+      <main>
+        <div className="title">
+          <h2>{errorMessage}</h2>
+        </div>
+      </main>
+    )
+  }
+
+  if (tours.length === 0) {
+    return (
+      <main>
+        <div className="title">
+          <h2>No Tours Left</h2>
+          <button className="btn" onClick={() => fetchTours()}>
+            Refresh
+          </button>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main>
-      <Tours tours={tours} />
+      {isLoading ? (
+        <h2 className="loading">Loading...</h2>
+      ) : (
+        <Tours tours={tours} removeTour={removeTour} />
+      )}
     </main>
   )
 }
